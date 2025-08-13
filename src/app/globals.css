@@ -195,7 +195,8 @@
 
   @keyframes fadeInUp {
     to {
-      @apply opacity-100 translate-y-0;
+      opacity: 1;
+      transform: translateY(0);
     }
   }
 
