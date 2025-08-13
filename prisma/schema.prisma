@@ -1,0 +1,251 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "mysql"
+  url      = env("DATABASE_URL")
+}
+
+model User {
+  id        Int      @id @default(autoincrement())
+  email     String   @unique @db.VarChar(255)
+  password  String   @db.VarChar(255)
+  role      String   @default("client") @db.VarChar(50)
+  created_at DateTime @default(now()) @map("created_at")
+  updated_at DateTime @updatedAt @map("updated_at")
+  
+  // Relacje
+  profile   UserProfile?
+  sessions  UserSession[]
+  packages  UserPackage[]
+  moduleAccess UserModuleAccess[]
+  requests  Request[]
+  payments  Payment[]
+  activityLogs ActivityLog[]
+  checklists UserChecklist[]
+  
+  @@map("users")
+}
+
+model UserProfile {
+  id         Int      @id @default(autoincrement())
+  user_id    Int      @unique @map("user_id")
+  first_name String   @map("first_name") @db.VarChar(100)
+  last_name  String   @map("last_name") @db.VarChar(100)
+  phone      String?  @db.VarChar(20)
+  address    String?  @db.Text
+  city       String?  @db.VarChar(100)
+  postal_code String? @map("postal_code") @db.VarChar(10)
+  country    String?  @db.VarChar(100)
+  created_at DateTime @default(now()) @map("created_at")
+  updated_at DateTime @updatedAt @map("updated_at")
+  
+  // Relacja
+  user       User     @relation(fields: [user_id], references: [id], onDelete: Cascade)
+  
+  @@map("user_profiles")
+}
+
+model Module {
+  id          Int      @id @default(autoincrement())
+  name        String   @db.VarChar(100)
+  description String?  @db.Text
+  is_active   Boolean  @default(true) @map("is_active")
+  created_at  DateTime @default(now()) @map("created_at")
+  
+  // Relacje
+  packageModules PackageModule[]
+  userModuleAccess UserModuleAccess[]
+  
+  @@map("modules")
+}
+
+model Package {
+  id          Int      @id @default(autoincrement())
+  name        String   @db.VarChar(100)
+  description String?  @db.Text
+  price       Decimal  @db.Decimal(10, 2)
+  duration    Int      // w dniach
+  is_active   Boolean  @default(true) @map("is_active")
+  created_at  DateTime @default(now()) @map("created_at")
+  
+  // Relacje
+  packageModules PackageModule[]
+  userPackages UserPackage[]
+  
+  @@map("packages")
+}
+
+model PackageModule {
+  id         Int      @id @default(autoincrement())
+  package_id Int      @map("package_id")
+  module_id  Int      @map("module_id")
+  created_at DateTime @default(now()) @map("created_at")
+  
+  // Relacje
+  package    Package  @relation(fields: [package_id], references: [id], onDelete: Cascade)
+  module     Module   @relation(fields: [module_id], references: [id], onDelete: Cascade)
+  
+  @@unique([package_id, module_id])
+  @@map("package_modules")
+}
+
+model UserPackage {
+  id         Int      @id @default(autoincrement())
+  user_id    Int      @map("user_id")
+  package_id Int      @map("package_id")
+  start_date DateTime @map("start_date")
+  end_date   DateTime @map("end_date")
+  status     String   @default("active") @db.VarChar(50)
+  created_at DateTime @default(now()) @map("created_at")
+  
+  // Relacje
+  user       User     @relation(fields: [user_id], references: [id], onDelete: Cascade)
+  package    Package  @relation(fields: [package_id], references: [id], onDelete: Cascade)
+  
+  @@map("user_packages")
+}
+
+model UserModuleAccess {
+  id         Int      @id @default(autoincrement())
+  user_id    Int      @map("user_id")
+  module_id  Int      @map("module_id")
+  granted_at DateTime @default(now()) @map("granted_at")
+  
+  // Relacje
+  user       User     @relation(fields: [user_id], references: [id], onDelete: Cascade)
+  module     Module   @relation(fields: [module_id], references: [id], onDelete: Cascade)
+  
+  @@unique([user_id, module_id])
+  @@map("user_module_access")
+}
+
+model Request {
+  id          Int      @id @default(autoincrement())
+  user_id     Int      @map("user_id")
+  type        String   @db.VarChar(100)
+  description String   @db.Text
+  status      String   @default("pending") @db.VarChar(50)
+  admin_notes String?  @db.Text
+  created_at  DateTime @default(now()) @map("created_at")
+  updated_at  DateTime @updatedAt @map("updated_at")
+  
+  // Relacje
+  user        User     @relation(fields: [user_id], references: [id], onDelete: Cascade)
+  
+  @@map("requests")
+}
+
+model Payment {
+  id          Int      @id @default(autoincrement())
+  user_id     Int      @map("user_id")
+  amount      Decimal  @db.Decimal(10, 2)
+  currency    String   @default("PLN") @db.VarChar(3)
+  status      String   @default("pending") @db.VarChar(50)
+  payment_method String @map("payment_method") @db.VarChar(100)
+  transaction_id String? @map("transaction_id") @db.VarChar(255)
+  created_at  DateTime @default(now()) @map("created_at")
+  
+  // Relacje
+  user        User     @relation(fields: [user_id], references: [id], onDelete: Cascade)
+  
+  @@map("payments")
+}
+
+model UserSession {
+  id         Int      @id @default(autoincrement())
+  user_id    Int      @map("user_id")
+  token      String   @unique @db.VarChar(255)
+  expires_at DateTime @map("expires_at")
+  created_at DateTime @default(now()) @map("created_at")
+  
+  // Relacje
+  user       User     @relation(fields: [user_id], references: [id], onDelete: Cascade)
+  
+  @@map("user_sessions")
+}
+
+model ActivityLog {
+  id          Int      @id @default(autoincrement())
+  user_id     Int      @map("user_id")
+  action      String   @db.VarChar(100)
+  details     String?  @db.Text
+  ip_address  String?  @map("ip_address") @db.VarChar(45)
+  user_agent  String?  @map("user_agent") @db.Text
+  created_at  DateTime @default(now()) @map("created_at")
+  
+  // Relacje
+  user        User     @relation(fields: [user_id], references: [id], onDelete: Cascade)
+  
+  @@map("activity_logs")
+}
+
+model DefaultChecklist {
+  id          Int      @id @default(autoincrement())
+  name        String   @db.VarChar(255)
+  description String?  @db.Text
+  category    String   @db.VarChar(100)
+  is_active   Boolean  @default(true) @map("is_active")
+  created_at  DateTime @default(now()) @map("created_at")
+  
+  // Relacje
+  items       DefaultChecklistItem[]
+  
+  @@map("default_checklists")
+}
+
+model DefaultChecklistItem {
+  id                Int      @id @default(autoincrement())
+  checklist_id      Int      @map("checklist_id")
+  title             String   @db.VarChar(255)
+  description       String?  @db.Text
+  estimated_days    Int?     @map("estimated_days")
+  priority          String   @default("medium") @db.VarChar(20)
+  order_index       Int      @default(0) @map("order_index")
+  created_at        DateTime @default(now()) @map("created_at")
+  
+  // Relacje
+  checklist         DefaultChecklist @relation(fields: [checklist_id], references: [id], onDelete: Cascade)
+  
+  @@map("default_checklist_items")
+}
+
+model UserChecklist {
+  id          Int      @id @default(autoincrement())
+  user_id     Int      @map("user_id")
+  name        String   @db.VarChar(255)
+  description String?  @db.Text
+  category    String   @db.VarChar(100)
+  is_active   Boolean  @default(true) @map("is_active")
+  created_at  DateTime @default(now()) @map("created_at")
+  updated_at  DateTime @updatedAt @map("updated_at")
+  
+  // Relacje
+  user        User     @relation(fields: [user_id], references: [id], onDelete: Cascade)
+  items       UserChecklistItem[]
+  
+  @@map("user_checklists")
+}
+
+model UserChecklistItem {
+  id                Int      @id @default(autoincrement())
+  checklist_id      Int      @map("checklist_id")
+  title             String   @db.VarChar(255)
+  description       String?  @db.Text
+  estimated_days    Int?     @map("estimated_days")
+  priority          String   @default("medium") @db.VarChar(20)
+  order_index       Int      @default(0) @map("order_index")
+  is_completed      Boolean  @default(false) @map("is_completed")
+  completed_at      DateTime? @map("completed_at")
+  created_at        DateTime @default(now()) @map("created_at")
+  updated_at        DateTime @updatedAt @map("updated_at")
+  
+  // Relacje
+  checklist         UserChecklist @relation(fields: [checklist_id], references: [id], onDelete: Cascade)
+  
+  @@map("user_checklist_items")
+}

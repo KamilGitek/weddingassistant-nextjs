@@ -1,0 +1,285 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  :root {
+    /* Kolory główne - delikatne pastelowe */
+    --color-primary: 245 245 220; /* Beż pastelowy */
+    --color-secondary: 240 240 240; /* Jasny szary */
+    --color-accent: 212 175 55; /* Złoty */
+    --color-accent-dark: 184 134 11; /* Ciemny złoty */
+    
+    /* Kolory tła */
+    --color-bg-main: 250 250 248; /* Bardzo jasny beż */
+    --color-bg-card: 255 255 255; /* Biały */
+    --color-bg-dark: 44 44 44; /* Ciemny szary */
+    
+    /* Kolory tekstu */
+    --color-text-primary: 44 44 44; /* Ciemny szary */
+    --color-text-secondary: 107 107 107; /* Średni szary */
+    --color-text-light: 158 158 158; /* Jasny szary */
+    
+    /* Kolory akcji */
+    --color-success: 76 175 80; /* Zielony */
+    --color-error: 244 67 54; /* Czerwony */
+    --color-warning: 255 152 0; /* Pomarańczowy */
+    
+    /* Cienie i efekty */
+    --shadow-light: 0 2px 8px rgba(0, 0, 0, 0.1);
+    --shadow-medium: 0 4px 16px rgba(0, 0, 0, 0.15);
+    --shadow-heavy: 0 8px 32px rgba(0, 0, 0, 0.2);
+    
+    /* Border radius */
+    --radius-small: 8px;
+    --radius-medium: 12px;
+    --radius-large: 20px;
+    
+    /* Spacing */
+    --spacing-xs: 8px;
+    --spacing-sm: 16px;
+    --spacing-md: 24px;
+    --spacing-lg: 32px;
+    --spacing-xl: 48px;
+    --spacing-xxl: 64px;
+  }
+
+  * {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+  }
+
+  html {
+    scroll-behavior: smooth;
+  }
+
+  body {
+    font-family: var(--font-inter), 'Arial', sans-serif;
+    background-color: rgb(var(--color-bg-main));
+    color: rgb(var(--color-text-primary));
+    line-height: 1.6;
+    font-size: 16px;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+  }
+
+  #root {
+    min-height: 100vh;
+  }
+}
+
+@layer components {
+  /* Main Content */
+  .main-content {
+    flex: 1;
+    padding-top: 80px; /* Space for fixed navbar */
+  }
+
+  /* Typography */
+  h1, h2, h3, h4, h5, h6 {
+    font-family: var(--font-playfair), 'Georgia', serif;
+    font-weight: 600;
+    line-height: 1.3;
+    margin-bottom: var(--spacing-md);
+  }
+
+  h1 {
+    font-size: 3rem;
+    color: rgb(var(--color-text-primary));
+  }
+
+  h2 {
+    font-size: 2.5rem;
+    color: rgb(var(--color-text-primary));
+  }
+
+  h3 {
+    font-size: 2rem;
+    color: rgb(var(--color-text-primary));
+  }
+
+  p {
+    margin-bottom: var(--spacing-md);
+    color: rgb(var(--color-text-secondary));
+    font-size: 1.1rem;
+  }
+
+  /* Buttons */
+  .btn {
+    @apply inline-block px-4 py-2 border-none rounded-xl font-inter text-base font-medium text-center cursor-pointer transition-all duration-300;
+  }
+
+  .btn-primary {
+    @apply bg-gradient-to-br from-amber-500 to-amber-700 text-white shadow-lg hover:-translate-y-0.5 hover:shadow-xl;
+  }
+
+  .btn-secondary {
+    @apply bg-transparent text-amber-600 border-2 border-amber-600 hover:bg-amber-600 hover:text-white;
+  }
+
+  .btn-large {
+    @apply px-6 py-3 text-lg;
+  }
+
+  /* Cards */
+  .card {
+    @apply bg-white rounded-3xl p-8 shadow-lg transition-all duration-300 hover:-translate-y-1 hover:shadow-xl;
+  }
+
+  .card-feature {
+    @apply text-center p-12 h-full flex flex-col justify-center;
+  }
+
+  .card-feature .icon {
+    @apply text-6xl mb-6 filter drop-shadow-lg;
+    color: rgb(var(--color-accent));
+  }
+
+  /* Forms */
+  .form-group {
+    @apply mb-6;
+  }
+
+  .form-label {
+    @apply block mb-2 font-semibold text-gray-800 font-inter text-sm;
+  }
+
+  .form-input {
+    @apply w-full px-4 py-2 border-2 border-gray-200 rounded-lg text-base font-inter transition-all duration-300 bg-white text-gray-800 focus:border-amber-500 focus:ring-4 focus:ring-amber-100 focus:outline-none;
+  }
+
+  .form-input::placeholder {
+    @apply text-gray-400;
+  }
+
+  .form-input.error {
+    @apply border-red-500 ring-red-100;
+  }
+
+  /* Container */
+  .container {
+    @apply max-w-6xl mx-auto px-6;
+  }
+
+  .container-small {
+    @apply max-w-4xl mx-auto px-6;
+  }
+
+  /* Grid */
+  .grid-2 {
+    @apply grid grid-cols-1 md:grid-cols-2 gap-8;
+  }
+
+  .grid-3 {
+    @apply grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8;
+  }
+
+  .grid-4 {
+    @apply grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8;
+  }
+
+  /* Utilities */
+  .text-center {
+    @apply text-center;
+  }
+
+  .text-gold {
+    color: rgb(var(--color-accent));
+  }
+
+  /* Animations */
+  .fade-in-up {
+    @apply opacity-0 translate-y-8 animate-[fadeInUp_0.8s_ease-out_forwards];
+  }
+
+  @keyframes fadeInUp {
+    to {
+      @apply opacity-100 translate-y-0;
+    }
+  }
+
+  /* Loading states */
+  .loading {
+    @apply opacity-70 pointer-events-none;
+  }
+
+  .loading::after {
+    content: '';
+    @apply absolute top-1/2 left-1/2 w-5 h-5 -mt-2.5 -ml-2.5 border-2 border-transparent border-t-amber-500 rounded-full animate-spin;
+  }
+}
+
+@layer utilities {
+  /* Margin utilities */
+  .mb-0 { margin-bottom: 0; }
+  .mb-sm { margin-bottom: var(--spacing-sm); }
+  .mb-md { margin-bottom: var(--spacing-md); }
+  .mb-lg { margin-bottom: var(--spacing-lg); }
+  .mb-xl { margin-bottom: var(--spacing-xl); }
+
+  .mt-0 { margin-top: 0; }
+  .mt-sm { margin-top: var(--spacing-sm); }
+  .mt-md { margin-top: var(--spacing-md); }
+  .mt-lg { margin-top: var(--spacing-lg); }
+  .mt-xl { margin-top: var(--spacing-xl); }
+}
+
+/* Scrollbar styling */
+::-webkit-scrollbar {
+  width: 8px;
+}
+
+::-webkit-scrollbar-track {
+  @apply bg-gray-100 rounded;
+}
+
+::-webkit-scrollbar-thumb {
+  @apply bg-amber-500 rounded hover:bg-amber-600;
+}
+
+/* Selection styling */
+::selection {
+  @apply bg-amber-300/30 text-gray-800;
+}
+
+/* Focus outline for accessibility */
+*:focus {
+  @apply outline-2 outline-amber-500 outline-offset-2;
+}
+
+/* Responsive Design */
+@media (max-width: 768px) {
+  h1 { font-size: 2.5rem; }
+  h2 { font-size: 2rem; }
+  h3 { font-size: 1.5rem; }
+  
+  .container {
+    @apply px-4;
+  }
+  
+  .card {
+    @apply p-6;
+  }
+  
+  .btn-large {
+    @apply px-4 py-2 text-base;
+  }
+  
+  .grid-3 {
+    @apply grid-cols-1;
+  }
+  
+  .grid-4 {
+    @apply grid-cols-2;
+  }
+}
+
+@media (max-width: 480px) {
+  h1 { font-size: 2rem; }
+  h2 { font-size: 1.8rem; }
+  
+  .grid-4 {
+    @apply grid-cols-1;
+  }
+}
