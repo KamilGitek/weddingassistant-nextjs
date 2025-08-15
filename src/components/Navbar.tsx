@@ -1,12 +1,48 @@
 'use client'
 
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
 import Link from 'next/link'
-import { usePathname } from 'next/navigation'
+import { usePathname, useRouter } from 'next/navigation'
 
 export default function Navbar() {
   const [isMenuOpen, setIsMenuOpen] = useState(false)
+  const [isLoggedIn, setIsLoggedIn] = useState(false)
+  const [userProfile, setUserProfile] = useState<any>(null)
   const pathname = usePathname()
+  const router = useRouter()
+
+  // Sprawdź czy użytkownik jest zalogowany
+  useEffect(() => {
+    const token = localStorage.getItem('authToken')
+    if (token) {
+      setIsLoggedIn(true)
+      // Pobierz profil użytkownika
+      fetchUserProfile(token)
+    }
+  }, [])
+
+  const fetchUserProfile = async (token: string) => {
+    try {
+      const response = await fetch('/api/auth/profile', {
+        headers: {
+          'Authorization': `Bearer ${token}`
+        }
+      })
+      if (response.ok) {
+        const data = await response.json()
+        setUserProfile(data.user)
+      }
+    } catch (error) {
+      console.error('Błąd podczas pobierania profilu:', error)
+    }
+  }
+
+  const handleLogout = () => {
+    localStorage.removeItem('authToken')
+    setIsLoggedIn(false)
+    setUserProfile(null)
+    router.push('/')
+  }
 
   const toggleMenu = () => {
     setIsMenuOpen(!isMenuOpen)
@@ -48,18 +84,41 @@ export default function Navbar() {
             >
               Dashboard
             </Link>
-            <Link 
-              href="/login" 
-              className="btn btn-secondary"
-            >
-              Zaloguj się
-            </Link>
-            <Link 
-              href="/register" 
-              className="btn btn-primary"
-            >
-              Zarejestruj się
-            </Link>
+            
+            {/* Warunkowe renderowanie na podstawie stanu logowania */}
+            {!isLoggedIn ? (
+              <>
+                <Link 
+                  href="/login" 
+                  className="btn btn-secondary"
+                >
+                  Zaloguj się
+                </Link>
+                <Link 
+                  href="/register" 
+                  className="btn btn-primary"
+                >
+                  Zarejestruj się
+                </Link>
+              </>
+            ) : (
+              <div className="flex items-center space-x-4">
+                <div className="text-right">
+                  <div className="text-sm text-gray-600">
+                    Witaj, {userProfile?.first_name || 'Użytkowniku'}!
+                  </div>
+                  <div className="text-xs text-gray-500">
+                    {userProfile?.role === 'admin' ? 'Administrator' : 'Użytkownik'}
+                  </div>
+                </div>
+                <button
+                  onClick={handleLogout}
+                  className="btn btn-secondary text-sm px-4 py-2"
+                >
+                  Wyloguj się
+                </button>
+              </div>
+            )}
           </div>
 
           {/* Mobile Menu Button */}
@@ -115,22 +174,43 @@ export default function Navbar() {
               >
                 Dashboard
               </Link>
-              <div className="pt-4 space-y-3">
-                <Link 
-                  href="/login" 
-                  className="btn btn-secondary w-full text-center"
-                  onClick={closeMenu}
-                >
-                  Zaloguj się
-                </Link>
-                <Link 
-                  href="/register" 
-                  className="btn btn-primary w-full text-center"
-                  onClick={closeMenu}
-                >
-                  Zarejestruj się
-                </Link>
-              </div>
+              
+              {/* Warunkowe renderowanie na mobile */}
+              {!isLoggedIn ? (
+                <div className="pt-4 space-y-3">
+                  <Link 
+                    href="/login" 
+                    className="btn btn-secondary w-full text-center"
+                    onClick={closeMenu}
+                  >
+                    Zaloguj się
+                  </Link>
+                  <Link 
+                    href="/register" 
+                    className="btn btn-primary w-full text-center"
+                    onClick={closeMenu}
+                  >
+                    Zarejestruj się
+                  </Link>
+                </div>
+              ) : (
+                <div className="pt-4 space-y-3">
+                  <div className="text-center py-2">
+                    <div className="text-sm text-gray-600">
+                      Witaj, {userProfile?.first_name || 'Użytkowniku'}!
+                    </div>
+                    <div className="text-xs text-gray-500">
+                      {userProfile?.role === 'admin' ? 'Administrator' : 'Użytkownik'}
+                    </div>
+                  </div>
+                  <button
+                    onClick={handleLogout}
+                    className="btn btn-secondary w-full text-center"
+                  >
+                    Wyloguj się
+                  </button>
+                </div>
+              )}
             </div>
           </div>
         )}
