@@ -181,7 +181,7 @@
 
   /* Utilities */
   .text-center {
-    @apply text-center;
+    text-align: center;
   }
 
   .text-gold {
