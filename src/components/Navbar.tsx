@@ -4,10 +4,23 @@ import { useState, useEffect } from 'react'
 import Link from 'next/link'
 import { usePathname, useRouter } from 'next/navigation'
 
+interface UserProfile {
+  id: number
+  email: string
+  role: string
+  first_name?: string
+  last_name?: string
+  phone?: string
+  address?: string
+  city?: string
+  postal_code?: string
+  country?: string
+}
+
 export default function Navbar() {
   const [isMenuOpen, setIsMenuOpen] = useState(false)
   const [isLoggedIn, setIsLoggedIn] = useState(false)
-  const [userProfile, setUserProfile] = useState<any>(null)
+  const [userProfile, setUserProfile] = useState<UserProfile | null>(null)
   const pathname = usePathname()
   const router = useRouter()
 
