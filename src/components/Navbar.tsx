@@ -21,23 +21,29 @@ export default function Navbar() {
   const [isMenuOpen, setIsMenuOpen] = useState(false)
   const [isLoggedIn, setIsLoggedIn] = useState(false)
   const [userProfile, setUserProfile] = useState<UserProfile | null>(null)
+  const [isLoading, setIsLoading] = useState(true) // Dodajemy loading state
   const pathname = usePathname()
   const router = useRouter()
 
   // Sprawdź czy użytkownik jest zalogowany
   useEffect(() => {
-    const token = localStorage.getItem('authToken')
-    console.log('🔍 Navbar: Sprawdzam token:', token ? 'Token istnieje' : 'Brak tokenu')
-    
-    if (token) {
-      setIsLoggedIn(true)
-      console.log('✅ Navbar: Ustawiam isLoggedIn = true')
-      // Pobierz profil użytkownika
-      fetchUserProfile(token)
-    } else {
-      console.log('❌ Navbar: Brak tokenu, isLoggedIn = false')
-      setIsLoggedIn(false)
+    const checkAuth = async () => {
+      const token = localStorage.getItem('authToken')
+      console.log('🔍 Navbar: Sprawdzam token:', token ? 'Token istnieje' : 'Brak tokenu')
+      
+      if (token) {
+        setIsLoggedIn(true)
+        console.log('✅ Navbar: Ustawiam isLoggedIn = true')
+        // Pobierz profil użytkownika
+        await fetchUserProfile(token)
+      } else {
+        console.log('❌ Navbar: Brak tokenu, isLoggedIn = false')
+        setIsLoggedIn(false)
+      }
+      setIsLoading(false) // Kończymy loading
     }
+
+    checkAuth()
   }, [])
 
   const fetchUserProfile = async (token: string) => {
@@ -58,9 +64,15 @@ export default function Navbar() {
         console.log('❌ Navbar: Błąd pobierania profilu:', response.status)
         const errorData = await response.json()
         console.log('❌ Navbar: Error details:', errorData)
+        // Jeśli token jest nieprawidłowy, usuń go
+        localStorage.removeItem('authToken')
+        setIsLoggedIn(false)
       }
     } catch (error) {
       console.error('❌ Navbar: Błąd podczas pobierania profilu:', error)
+      // W przypadku błędu, usuń token
+      localStorage.removeItem('authToken')
+      setIsLoggedIn(false)
     }
   }
 
@@ -77,6 +89,43 @@ export default function Navbar() {
 
   const closeMenu = () => {
     setIsMenuOpen(false)
+  }
+
+  // Jeśli jeszcze ładujemy, pokaż podstawowy navbar
+  if (isLoading) {
+    return (
+      <nav className="fixed top-0 left-0 right-0 z-50 bg-white/80 backdrop-blur-md border-b border-gray-200/50">
+        <div className="container mx-auto px-6">
+          <div className="flex items-center justify-between h-20">
+            {/* Logo */}
+            <Link href="/" className="flex items-center space-x-3">
+              <div className="w-10 h-10 bg-gradient-to-br from-amber-500 to-amber-700 rounded-full flex items-center justify-center">
+                <span className="text-white font-bold text-xl">W</span>
+              </div>
+              <span className="font-playfair text-2xl font-bold text-gray-800">
+                Wedding Assistant
+              </span>
+            </Link>
+
+            {/* Podstawowa nawigacja podczas ładowania */}
+            <div className="hidden md:flex items-center space-x-8">
+              <Link 
+                href="/" 
+                className="text-gray-700 hover:text-amber-600 transition-colors duration-300 font-medium"
+              >
+                Strona główna
+              </Link>
+              <Link 
+                href="/dashboard" 
+                className="text-gray-700 hover:text-amber-600 transition-colors duration-300 font-medium"
+              >
+                Dashboard
+              </Link>
+            </div>
+          </div>
+        </div>
+      </nav>
+    )
   }
 
   return (
@@ -97,16 +146,20 @@ export default function Navbar() {
           <div className="hidden md:flex items-center space-x-8">
             <Link 
               href="/" 
-              className={`text-gray-700 hover:text-amber-600 transition-colors duration-300 ${
-                pathname === '/' ? 'text-amber-600 font-semibold' : ''
+              className={`font-medium transition-colors duration-300 ${
+                pathname === '/' 
+                  ? 'text-amber-600 font-semibold' 
+                  : 'text-gray-700 hover:text-amber-600'
               }`}
             >
               Strona główna
             </Link>
             <Link 
               href="/dashboard" 
-              className={`text-gray-700 hover:text-amber-600 transition-colors duration-300 ${
-                pathname === '/dashboard' ? 'text-amber-600 font-semibold' : ''
+              className={`font-medium transition-colors duration-300 ${
+                pathname === '/dashboard' 
+                  ? 'text-amber-600 font-semibold' 
+                  : 'text-gray-700 hover:text-amber-600'
               }`}
             >
               Dashboard
@@ -131,7 +184,7 @@ export default function Navbar() {
             ) : (
               <div className="flex items-center space-x-4">
                 <div className="text-right">
-                  <div className="text-sm text-gray-600">
+                  <div className="text-sm font-medium text-gray-700">
                     Witaj, {userProfile?.first_name || 'Użytkowniku'}!
                   </div>
                   <div className="text-xs text-gray-500">
@@ -185,8 +238,10 @@ export default function Navbar() {
             <div className="flex flex-col space-y-4">
               <Link 
                 href="/" 
-                className={`text-gray-700 hover:text-amber-600 transition-colors duration-300 py-2 ${
-                  pathname === '/' ? 'text-amber-600 font-semibold' : ''
+                className={`font-medium transition-colors duration-300 py-2 ${
+                  pathname === '/' 
+                    ? 'text-amber-600 font-semibold' 
+                    : 'text-gray-700 hover:text-amber-600'
                 }`}
                 onClick={closeMenu}
               >
@@ -194,8 +249,10 @@ export default function Navbar() {
               </Link>
               <Link 
                 href="/dashboard" 
-                className={`text-gray-700 hover:text-amber-600 transition-colors duration-300 py-2 ${
-                  pathname === '/dashboard' ? 'text-amber-600 font-semibold' : ''
+                className={`font-medium transition-colors duration-300 py-2 ${
+                  pathname === '/dashboard' 
+                    ? 'text-amber-600 font-semibold' 
+                    : 'text-gray-700 hover:text-amber-600'
                 }`}
                 onClick={closeMenu}
               >
@@ -223,7 +280,7 @@ export default function Navbar() {
               ) : (
                 <div className="pt-4 space-y-3">
                   <div className="text-center py-2">
-                    <div className="text-sm text-gray-600">
+                    <div className="text-sm font-medium text-gray-700">
                       Witaj, {userProfile?.first_name || 'Użytkowniku'}!
                     </div>
                     <div className="text-xs text-gray-500">
