@@ -65,7 +65,7 @@ export default function LoginPage() {
 
       if (data.success) {
         // Zapisanie tokenu w localStorage
-        localStorage.setItem('token', data.token)
+        localStorage.setItem('authToken', data.token)
         localStorage.setItem('user', JSON.stringify(data.user))
         
         // Przekierowanie do dashboard
