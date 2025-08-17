@@ -27,26 +27,40 @@ export default function Navbar() {
   // Sprawdź czy użytkownik jest zalogowany
   useEffect(() => {
     const token = localStorage.getItem('authToken')
+    console.log('🔍 Navbar: Sprawdzam token:', token ? 'Token istnieje' : 'Brak tokenu')
+    
     if (token) {
       setIsLoggedIn(true)
+      console.log('✅ Navbar: Ustawiam isLoggedIn = true')
       // Pobierz profil użytkownika
       fetchUserProfile(token)
+    } else {
+      console.log('❌ Navbar: Brak tokenu, isLoggedIn = false')
+      setIsLoggedIn(false)
     }
   }, [])
 
   const fetchUserProfile = async (token: string) => {
     try {
+      console.log('🔍 Navbar: Pobieram profil użytkownika...')
       const response = await fetch('/api/auth/profile', {
         headers: {
           'Authorization': `Bearer ${token}`
         }
       })
+      console.log('📡 Navbar: Response status:', response.status)
+      
       if (response.ok) {
         const data = await response.json()
+        console.log('✅ Navbar: Profil pobrany:', data.user)
         setUserProfile(data.user)
+      } else {
+        console.log('❌ Navbar: Błąd pobierania profilu:', response.status)
+        const errorData = await response.json()
+        console.log('❌ Navbar: Error details:', errorData)
       }
     } catch (error) {
-      console.error('Błąd podczas pobierania profilu:', error)
+      console.error('❌ Navbar: Błąd podczas pobierania profilu:', error)
     }
   }
 
