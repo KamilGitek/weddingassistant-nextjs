@@ -172,7 +172,13 @@ export default function DiagnosticPage() {
                           <div>
                             <p><strong>Użytkownicy w bazie:</strong></p>
                             <ul className="ml-4 list-disc">
-                              {result.users.map((user: any) => (
+                              {result.users.map((user: {
+                                id: number
+                                email: string
+                                role: string
+                                created_at: string
+                                status: string
+                              }) => (
                                 <li key={user.id}>
                                   {user.email} ({user.role}) - {new Date(user.created_at).toLocaleDateString()}
                                 </li>
