@@ -55,7 +55,7 @@
   }
 
   body {
-    font-family: var(--font-inter), 'Arial', sans-serif;
+    font-family: 'Inter', 'Arial', sans-serif;
     background-color: rgb(var(--color-bg-main));
     color: rgb(var(--color-text-primary));
     line-height: 1.6;
@@ -107,7 +107,7 @@
 
   /* Buttons */
   .btn {
-    @apply inline-block px-4 py-2 border-none rounded-xl font-inter text-base font-medium text-center cursor-pointer transition-all duration-300;
+    @apply inline-block px-4 py-2 border-none rounded-xl font-sans text-base font-medium text-center cursor-pointer transition-all duration-300;
   }
 
   .btn-primary {
@@ -142,11 +142,11 @@
   }
 
   .form-label {
-    @apply block mb-2 font-semibold text-gray-800 font-inter text-sm;
+    @apply block mb-2 font-semibold text-gray-800 font-sans text-sm;
   }
 
   .form-input {
-    @apply w-full px-4 py-2 border-2 border-gray-200 rounded-lg text-base font-inter transition-all duration-300 bg-white text-gray-800 focus:border-amber-500 focus:ring-4 focus:ring-amber-100 focus:outline-none;
+    @apply w-full px-4 py-2 border-2 border-gray-200 rounded-lg text-base font-sans transition-all duration-300 bg-white text-gray-800 focus:border-amber-500 focus:ring-4 focus:ring-amber-100 focus:outline-none;
   }
 
   .form-input::placeholder {
