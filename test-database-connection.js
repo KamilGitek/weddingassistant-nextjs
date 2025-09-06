@@ -106,3 +106,4 @@ async function runTests() {
 
 // Uruchom testy
 runTests().catch(console.error);
+

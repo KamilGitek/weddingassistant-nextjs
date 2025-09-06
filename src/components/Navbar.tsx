@@ -164,6 +164,18 @@ export default function Navbar() {
             >
               Dashboard
             </Link>
+            {isLoggedIn && userProfile?.role === 'admin' && (
+              <Link 
+                href="/diagnostic" 
+                className={`font-medium transition-colors duration-300 ${
+                  pathname === '/diagnostic' 
+                    ? 'text-amber-600 font-semibold' 
+                    : 'text-gray-700 hover:text-amber-600'
+                }`}
+              >
+                🔧 Diagnostyka
+              </Link>
+            )}
             
             {/* Warunkowe renderowanie na podstawie stanu logowania */}
             {!isLoggedIn ? (
@@ -258,6 +270,19 @@ export default function Navbar() {
               >
                 Dashboard
               </Link>
+              {isLoggedIn && userProfile?.role === 'admin' && (
+                <Link 
+                  href="/diagnostic" 
+                  className={`font-medium transition-colors duration-300 py-2 ${
+                    pathname === '/diagnostic' 
+                      ? 'text-amber-600 font-semibold' 
+                      : 'text-gray-700 hover:text-amber-600'
+                  }`}
+                  onClick={closeMenu}
+                >
+                  🔧 Diagnostyka
+                </Link>
+              )}
               
               {/* Warunkowe renderowanie na mobile */}
               {!isLoggedIn ? (
