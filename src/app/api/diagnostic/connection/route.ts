@@ -1,7 +1,7 @@
-import { NextRequest, NextResponse } from 'next/server'
+import { NextResponse } from 'next/server'
 import { PrismaClient } from '@prisma/client'
 
-export async function GET(request: NextRequest) {
+export async function GET() {
   try {
     // Konfiguracje do przetestowania
     const configs = [
@@ -67,15 +67,16 @@ export async function GET(request: NextRequest) {
           modules: modules,
           timestamp: new Date().toISOString()
         })
-      } catch (error: any) {
-        results.push({
-          success: false,
-          host: config.name,
-          url: config.url,
-          error: error.message,
-          timestamp: new Date().toISOString()
-        })
-      }
+    } catch (error: unknown) {
+      const errorMessage = error instanceof Error ? error.message : 'Nieznany błąd'
+      results.push({
+        success: false,
+        host: config.name,
+        url: config.url,
+        error: errorMessage,
+        timestamp: new Date().toISOString()
+      })
+    }
     }
 
     return NextResponse.json({
@@ -88,12 +89,13 @@ export async function GET(request: NextRequest) {
       }
     })
 
-  } catch (error: any) {
+  } catch (error: unknown) {
+    const errorMessage = error instanceof Error ? error.message : 'Nieznany błąd'
     return NextResponse.json(
       { 
         success: false, 
         error: 'Błąd podczas testowania połączeń',
-        details: error.message 
+        details: errorMessage 
       },
       { status: 500 }
     )

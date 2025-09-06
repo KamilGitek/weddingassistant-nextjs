@@ -55,12 +55,13 @@ export async function POST(request: NextRequest) {
       }
     })
 
-  } catch (error: any) {
+  } catch (error: unknown) {
+    const errorMessage = error instanceof Error ? error.message : 'Nieznany błąd'
     return NextResponse.json(
       { 
         success: false, 
         error: 'Błąd podczas testowania logowania',
-        details: error.message 
+        details: errorMessage 
       },
       { status: 500 }
     )

@@ -7,8 +7,45 @@ export default function DiagnosticPage() {
   const [password, setPassword] = useState('')
   const [hashedPassword, setHashedPassword] = useState('')
   const [isHashing, setIsHashing] = useState(false)
-  const [testResults, setTestResults] = useState<any[]>([])
-  const [loginTestResult, setLoginTestResult] = useState<any>(null)
+  const [testResults, setTestResults] = useState<Array<{
+    success: boolean
+    host: string
+    url: string
+    error?: string
+    tableCount?: number
+    userCount?: number
+    users?: Array<{
+      id: number
+      email: string
+      role: string
+      created_at: string
+      status: string
+    }>
+    modules?: Array<{
+      id: number
+      name: string
+      is_active: boolean
+    }>
+    timestamp: string
+  }>>([])
+  const [loginTestResult, setLoginTestResult] = useState<{
+    success: boolean
+    error?: string
+    details?: {
+      email: string
+      userExists: boolean
+      passwordValid?: boolean
+      user?: {
+        id: number
+        email: string
+        role: string
+        status: string
+        created_at: string
+        hasProfile: boolean
+      }
+      timestamp: string
+    }
+  } | null>(null)
   const [isTestingLogin, setIsTestingLogin] = useState(false)
 
   const runAllTests = async () => {
@@ -73,7 +110,7 @@ export default function DiagnosticPage() {
 
       const data = await response.json()
       setLoginTestResult(data)
-    } catch (error) {
+    } catch {
       setLoginTestResult({ success: false, error: 'Błąd połączenia z API' })
     } finally {
       setIsTestingLogin(false)

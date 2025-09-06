@@ -54,7 +54,7 @@ export async function POST(request: NextRequest) {
     })
 
     // Usunięcie hasła z odpowiedzi
-    const { password: _, ...userWithoutPassword } = user
+    const { password, ...userWithoutPassword } = user
 
     return NextResponse.json({
       success: true,
