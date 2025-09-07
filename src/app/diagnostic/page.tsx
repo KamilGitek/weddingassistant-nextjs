@@ -19,7 +19,6 @@ export default function DiagnosticPage() {
       email: string
       role: string
       created_at: string
-      status: string
     }>
     modules?: Array<{
       id: number
@@ -177,7 +176,6 @@ export default function DiagnosticPage() {
                                 email: string
                                 role: string
                                 created_at: string
-                                status: string
                               }) => (
                                 <li key={user.id}>
                                   {user.email} ({user.role}) - {new Date(user.created_at).toLocaleDateString()}

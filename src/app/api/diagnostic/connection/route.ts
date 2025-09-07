@@ -43,8 +43,7 @@ export async function GET() {
             id: true, 
             email: true, 
             role: true, 
-            created_at: true,
-            status: true
+            created_at: true
           }
         })
 
