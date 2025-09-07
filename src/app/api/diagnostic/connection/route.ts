@@ -35,7 +35,7 @@ export async function GET() {
         const testResult = await prisma.$queryRaw`SELECT 1 as test`
         
         // Sprawdzenie tabel
-        const tables = await prisma.$queryRaw`SHOW TABLES`
+        const tables = await prisma.$queryRaw`SHOW TABLES` as Array<{ [key: string]: string }>
         
         // Sprawdzenie użytkowników
         const users = await prisma.user.findMany({
